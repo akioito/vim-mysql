@@ -2,22 +2,25 @@ vim-mysql: Vim mysql made simple.
 
 Put cursor on SQL paragraph and :Mysql 
 Output in myfile.txt by default or in specified file, 'test.txt' in sample bellow. 
-Open output from another vim instance wiht autoread to see it instantly.
+Open output from another vim instance with autoread to see it instantly.
 
 Sample.mysql
 -----------------------------------------
-connInfo: ssh user@gc-db1 "mysql -u test -ppasswd dbname"
+# Sample.mysql
+mySQLcmd:     ssh user@gc-db1 "mysql -u test -ppasswd dbname"
 defaultFile:  myfile.txt
 
+# check xyz in test
 test.txt:
    Select * from test
    where a = 'xyz'
    limit 10
 
+# show all test tables
 show tables like '%test%'
 
-show create table test¥G
-
+show create table test¥G  
+              
 -----------------------------------------
 
 PS: work in progress...
