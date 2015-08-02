@@ -1,0 +1,6 @@
+# mysql.vim-prj
+README
+*.mysql
+plugin/*.vim
+
+# cmd: set tags=tags

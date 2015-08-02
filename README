@@ -7,7 +7,6 @@ Open output from another vim instance wiht autoread to see it instantly.
 Sample.mysql
 -----------------------------------------
 connInfo: ssh user@gc-db1 "mysql -u test -ppasswd dbname"
-outputFolder: .mytest
 defaultFile:  myfile.txt
 
 test.txt:

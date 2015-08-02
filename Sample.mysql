@@ -1,0 +1,12 @@
+mySQLcmd:     ssh user@gc-db1 "mysql -u test -ppasswd dbname"
+defaultFile:  myfile.txt
+
+test.txt:
+   Select * from test
+   where a = 'xyz'
+   limit 10
+
+show tables like '%test%'
+
+show create table test¥G  
+
