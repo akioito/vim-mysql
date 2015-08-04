@@ -129,3 +129,4 @@ endfunction
 command! MySQL call s:MySQL()
 
 autocmd BufEnter *.mysql let g:currentMySQL = expand('%:p')
+autocmd FileType   mysql setlocal commentstring=#\ %s 
