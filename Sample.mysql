@@ -1,6 +1,8 @@
-# Sample.mysql
-mySQLcmd:     ssh user@gc-db1 "mysql -u test -ppasswd dbname"
-defaultFile:  myfile.txt
+# Sample.mysql 
+# one blank line between SQLs, put cursor in sql row and :MySQL
+mySQLcmd:    mysql -u dbuser -pdbpassword db --execute="{sql}"
+dbHost:      user@gc-db1
+defaultFile: myresult.txt  
 
 # check xyz in test
 test.txt:

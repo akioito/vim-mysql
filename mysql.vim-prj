@@ -1,6 +1,10 @@
 # mysql.vim-prj
+# 
 README
 *.mysql
 plugin/*.vim
+
+# for example...
+~/Downloads2015/mysql/sample.mysql
 
 # cmd: set tags=tags

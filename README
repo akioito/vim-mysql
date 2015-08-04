@@ -1,14 +1,16 @@
 vim-mysql: Vim mysql made simple.
 
-Put cursor on SQL paragraph and :Mysql 
-Output in myfile.txt by default or in specified file, 'test.txt' in sample bellow. 
-Open output from another vim instance with autoread to see it instantly.
+Put cursor on SQL paragraph and :MySQL 
+Output in myresult.txt by default or in specified file, 'test.txt' in sample bellow. 
+Open output from another vim instance or tail -f myresult.txt.
 
 Sample.mysql
 -----------------------------------------
 # Sample.mysql
-mySQLcmd:     ssh user@gc-db1 "mysql -u test -ppasswd dbname"
-defaultFile:  myfile.txt
+# one blank line between SQLs, put cursor in sql row and :MySQL  
+mySQLcmd:    mysql -u dbuser -pdbpassword db --execute="{sql}"
+dbHost:      user@gc-db1
+defaultFile: myresult.txt
 
 # check xyz in test
 test.txt:
@@ -22,6 +24,15 @@ show tables like '%test%'
 show create table test¥G  
               
 -----------------------------------------
+Dependency:
+ MacVim compiled with python 2.7
+ pip install fabric
 
-PS: work in progress...
+Install:
+NeoBundle 'akioito/vim-project-files' " Optional
+NeoBundle 'akioito/vim-mysql'
+
+Not perfect, working in progress, make it perfect forking and customizing to your needs...
+
+Copyright (c) Akio Ito. Distributed under the same terms as Vim itself. See :help license.
 
