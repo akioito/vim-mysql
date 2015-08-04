@@ -51,14 +51,20 @@ def _shell_escape(string):
     return string  
 
 # ----------------------------------------------------------------------------
-def run_cmd(cmd, outPutFile):
-    env.hosts = [infoDic['dbHost']]
+def run_cmd(cmd, outPutFile, comment):
     with settings(hide('warnings', 'running', 'stdout', 'stderr')):
-        # print('cmd=%s' % cmd)
         res = run(cmd).replace('\r', '')
-        # print('res=\n%s' % res)
         with open(outPutFile, 'w') as f:
+            if comment:
+                xcomment = comment
+            else:
+                xcomment = '# %s' % ('-' * 77)
+            f.write('%s\n' % xcomment)
+            
+            if 'execute=' in cmd:
+                f.write('%s\n' % cmd.split('execute=')[1].strip().strip('""')) # Todo: more flexible...
             f.write(res)
+            f.write('\n\n')
 
 # ----------------------------------------------------------------------------
 filename= vim.eval("g:currentMySQL").replace(' ','\\ ')
@@ -82,7 +88,6 @@ else:
     if row < 4:
         print noSQL
     else:
-        print 'started...'
         # istartPos --------------------------------------------------------------
         irow = row - 1
         istartPos = 0
@@ -97,30 +102,27 @@ else:
             if not line:
                 break
             sqlList.append(line)
-        # print('sqlList1=%s' % str(sqlList)) # testIto
         if not sqlList:
             print noSQL 
-        # print('sqlList[0]=%s' % sqlList[0]) # testIto
         if sqlList and sqlList[0].startswith('#'):
             comment = sqlList[0]
             sqlList = sqlList[1:]
-            # print('sqlList2=%s' % str(sqlList)) # testIto
         if sqlList and ':' in sqlList[0]:
             outPutFile = sqlList[0].replace(':','')
             sqlList = sqlList[1:]
-            # print('sqlList3=%s' % str(sqlList)) # testIto
         if not outPutFile:
             outPutFile = infoDic['defaultFile']
         if sqlList:
-            # print 'outPutFile=%s' % outPutFile 
             sqlList = [line for line in sqlList if line[0] != '#']
-            sql = ' '.join(sqlList)
-            # sql = sql.replace("'", "\\'").replace('""', '\\"')
+            sql = '\n'.join(sqlList)
             sql = _shell_escape(sql)
-            print(sql)
+            # print(sql)
+            env.hosts = [infoDic['dbHost']]
             cmd = infoDic['mySQLcmd'].format(sql=sql)
-            tasks.execute(run_cmd, cmd, outPutFile)
-            disconnect_all() # Call this when you are done, or get an ugly exception!
+            try:
+                tasks.execute(run_cmd, cmd, outPutFile, comment)
+            finally:
+                disconnect_all() # Call this when you are done, or get an ugly exception!
 
 print(' ')
 EOF
@@ -130,3 +132,5 @@ command! MySQL call s:MySQL()
 
 autocmd BufEnter *.mysql let g:currentMySQL = expand('%:p')
 autocmd FileType   mysql setlocal commentstring=#\ %s 
+autocmd FileType   mysql setlocal cmdheight=3
+
