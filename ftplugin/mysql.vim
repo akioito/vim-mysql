@@ -20,10 +20,6 @@ let loaded_mysql = 1
 
 "-----------------------------------------------------------------------------
 function! s:MySQL()
-if !exists("g:currentMySQL")
-    return
-endif
-
 Py << EOF
 import vim 
 from fabric import tasks
@@ -40,9 +36,6 @@ infoDic = {
     'dbHost':      '',
     'defaultFile': 'myfile.txt'
 }
-outPutFile = ''
-comment    = ''
-sql        = ''  
 
 # ----------------------------------------------------------------------------
 def _shell_escape(string):
@@ -67,30 +60,30 @@ def run_cmd(cmd, outPutFile, comment):
             f.write('\n\n')
 
 # ----------------------------------------------------------------------------
-filename= vim.eval("g:currentMySQL").replace(' ','\\ ')
-with open(filename) as f:
-    textList = []
-    for xline in f.readlines():
-        line = xline.strip()
-        #    if not line:
-        #    line = delim
-        textList.append(line)
-        if ':' in line:
-            xkey, value = line.split(':')[:2]
-            key = xkey.strip()
-            if key in infoDic:
-                infoDic[key] = value.strip()
+textList = []
+for xline in vim.current.buffer[:]:
+    line = xline.strip()
+    textList.append(line)
+    if ':' in line:
+        xkey, value = line.split(':')[:2]
+        key = xkey.strip()
+        if key in infoDic:
+            infoDic[key] = value.strip()
 
 if not infoDic['mySQLcmd'] or not infoDic['dbHost']:
-    print 'No mySQLcmd or dbHost...'
+    print 'mysql.vim, no mySQLcmd or dbHost...'
 else:
     row,col = vim.current.window.cursor
     if row < 4:
         print noSQL
     else:
+        outPutFile = ''
+        comment = []
+
         # istartPos --------------------------------------------------------------
         irow = row - 1
         istartPos = 0
+        
         for i in xrange(irow, 0, -1): 
             if not textList[i]:
                 istartPos = i + 1
@@ -101,36 +94,38 @@ else:
             line = textList[i]
             if not line:
                 break
+            if ':' in line and '.txt' in line:
+                outPutFile = line.replace(':', '')
+                continue
+            if line.startswith('#'): 
+                comment.append(line)
+                continue
             sqlList.append(line)
         if not sqlList:
             print noSQL 
-        if sqlList and sqlList[0].startswith('#'):
-            comment = sqlList[0]
-            sqlList = sqlList[1:]
-        if sqlList and ':' in sqlList[0]:
-            outPutFile = sqlList[0].replace(':','')
-            sqlList = sqlList[1:]
         if not outPutFile:
             outPutFile = infoDic['defaultFile']
         if sqlList:
-            sqlList = [line for line in sqlList if line[0] != '#']
+            # sqlList = [line for line in sqlList if line[0] != '#']
             sql = '\n'.join(sqlList)
             sql = _shell_escape(sql)
             # print(sql)
             env.hosts = [infoDic['dbHost']]
             cmd = infoDic['mySQLcmd'].format(sql=sql)
             try:
-                tasks.execute(run_cmd, cmd, outPutFile, comment)
+                tasks.execute(run_cmd, cmd, outPutFile, '\n'.join(comment))
             finally:
                 disconnect_all() # Call this when you are done, or get an ugly exception!
 
 print(' ')
 EOF
+
 endfunction
 
 command! MySQL call s:MySQL()
 
-autocmd BufEnter *.mysql let g:currentMySQL = expand('%:p')
-autocmd FileType   mysql setlocal commentstring=#\ %s 
-autocmd FileType   mysql setlocal cmdheight=3
+autocmd BufLeave,FocusLost * echo ' '
+
+setlocal commentstring=#\ %s 
+setlocal cmdheight=3
 

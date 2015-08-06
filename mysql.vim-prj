@@ -2,9 +2,8 @@
 # 
 README
 *.mysql
-plugin/*.vim
+ftplugin/*.vim
 
 # for example...
 ~/Downloads2015/mysql/sample.mysql
-
 # cmd: set tags=tags
