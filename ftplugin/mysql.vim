@@ -38,12 +38,6 @@ infoDic = {
 }
 
 # ----------------------------------------------------------------------------
-def _shell_escape(string):
-    for char in ('"', '$', '`'):
-        string = string.replace(char, '\%s' % char)
-    return string  
-
-# ----------------------------------------------------------------------------
 def run_cmd(cmd, outPutFile, comment):
     with settings(hide('warnings', 'running', 'stdout', 'stderr')):
         res = run(cmd).replace('\r', '')
@@ -107,8 +101,7 @@ else:
             outPutFile = infoDic['defaultFile']
         if sqlList:
             # sqlList = [line for line in sqlList if line[0] != '#']
-            sql = '\n'.join(sqlList)
-            sql = _shell_escape(sql)
+            sql = '\n'.join(sqlList).replace('"', "'") # 
             # print(sql)
             env.hosts = [infoDic['dbHost']]
             cmd = infoDic['mySQLcmd'].format(sql=sql)
