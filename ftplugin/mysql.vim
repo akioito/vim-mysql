@@ -65,11 +65,11 @@ for xline in vim.current.buffer[:]:
             infoDic[key] = value.strip()
 
 if not infoDic['mySQLcmd'] or not infoDic['dbHost']:
-    print 'mysql.vim, no mySQLcmd or dbHost...'
+    print('mysql.vim, no mySQLcmd or dbHost...')
 else:
     row,col = vim.current.window.cursor
     if row < 4:
-        print noSQL
+        print(noSQL)
     else:
         outPutFile = ''
         comment = []
@@ -78,13 +78,13 @@ else:
         irow = row - 1
         istartPos = 0
         
-        for i in xrange(irow, 0, -1): 
+        for i in range(irow, 0, -1): 
             if not textList[i]:
                 istartPos = i + 1
                 break
         # get [filename] + SQL ---------------------------------------------------
         sqlList = []
-        for i in xrange(istartPos, len(textList) - 1, 1):
+        for i in range(istartPos, len(textList) - 1, 1):
             line = textList[i]
             if not line:
                 break
@@ -96,7 +96,7 @@ else:
                 continue
             sqlList.append(line)
         if not sqlList:
-            print noSQL 
+            print(noSQL) 
         if not outPutFile:
             outPutFile = infoDic['defaultFile']
         if sqlList:
